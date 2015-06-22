@@ -2,6 +2,7 @@ package com.i_software.ebook;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -22,46 +23,44 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         String prefixURL = "http://mybooks.com.hk/textbook2/login?access_token=i6FHCYlILVKvUXsacwnH&login_key=";
-        String postFixURL = "";
-        String fileName = "ebook.txt";
-        String fullURL = "";
-        String path = "/download/ebook";
+        String postFixURL;
+        String fileName = "/ebook.txt";
+        String fullURL;
+        String path;
 
 
-       // File myDir = getFilesDir();
-        //Toast.makeText(getApplicationContext(), myDir.toString(),
-         //       Toast.LENGTH_SHORT).show();
-       // File path=getFilesDir();
-      //  fileName = path + fileName;
-        File file = new File(fileName);
-        File folder = new File(path);
-     Toast.makeText(getApplicationContext(), " path ",
+
+       // File file = new File(fileName);
+        File folder;
+        folder = new File(Environment.getExternalStorageDirectory() + "/Android/data/com.i_software.ebook");
+        File file = new File(folder + fileName);
+     Toast.makeText(getApplicationContext(), file.getAbsolutePath().toString(),
              Toast.LENGTH_SHORT).show();
 
-        if(file.exists()) {
-            //  postFixURL = read_file(getApplicationContext(), fileName);
 
-            postFixURL = readFile(fileName);
-            Toast.makeText(getApplicationContext(), postFixURL,
-                    Toast.LENGTH_SHORT).show();
-            fullURL = prefixURL + "" + postFixURL;
-            Intent i = new Intent(Intent.ACTION_VIEW);
-            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            i.setData(Uri.parse(fullURL));
-            startActivity(i);
-         this.finish();
-        }
-        if (!file.exists()) {
-            try {
-
-                file.createNewFile();
-
-                Toast.makeText(getApplicationContext(), "Setup Done with path " ,
+            if (file.exists()) {
+                //  postFixURL = read_file(getApplicationContext(), fileName);
+                path = folder + fileName;
+                postFixURL = readFile(path);
+                Toast.makeText(getApplicationContext(), postFixURL,
                         Toast.LENGTH_SHORT).show();
-            } catch (IOException e) {
-                e.printStackTrace();
+                fullURL = prefixURL + postFixURL;
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                i.setData(Uri.parse(fullURL));
+                startActivity(i);
+                this.finish();
             }
+
+        if (!file.exists()) {
+            folder.mkdirs();
+
+            path = folder.getAbsoluteFile().toString();
+
+            Toast.makeText(getApplicationContext(), path ,
+                    Toast.LENGTH_SHORT).show();
         }
+
 
 
 
@@ -79,7 +78,7 @@ public class MainActivity extends ActionBarActivity {
         try {
 
             StringBuffer output = new StringBuffer();
-            //   String fpath = "/sdcard/"+fname+".txt";
+
 
             br = new BufferedReader(new FileReader(fileName));
             String line = "";
